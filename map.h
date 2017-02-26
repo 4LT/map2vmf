@@ -13,9 +13,9 @@ struct Map_kvPair
 
 struct Map_texData
 {
-    float scale[2];
     float offset[2];
     float rotation;
+    float scale[2];
     char *texName;
     unsigned int texNameSz;
 };
