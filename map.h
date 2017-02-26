@@ -1,3 +1,6 @@
+#ifndef MAP_H_
+#define MAP_H_
+
 struct Map_ivec3
 {
     int xyz[3];
@@ -49,3 +52,5 @@ struct Map_map
 struct Map_entity *Map_create(const char *fileName);
 
 void Map_destroy(struct Map_map *map);
+
+#endif
