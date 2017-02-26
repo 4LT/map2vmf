@@ -40,6 +40,12 @@ struct Map_entity
     unsigned int brushCount;
 };
 
+struct Map_map
+{
+    struct Map_entity *entities;
+    unsigned int entCount;
+};
+
 struct Map_entity *Map_newEntityFromFile(const char *fileName);
 
 void Map_freeEntity(struct Map_entity *entity);
