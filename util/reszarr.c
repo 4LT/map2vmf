@@ -1,7 +1,7 @@
 #define INIT_SZ 16
 #define RESIZE 2
 
-struct ReszArr_array
+struct ReszArr_Array
 {
     size_t capacity;
     size_t count;
@@ -9,9 +9,9 @@ struct ReszArr_array
     void *data;
 };
 
-struct ReszArr_array *ReszArr_create(unsigned int typeSize)
+struct ReszArr_Array *ReszArr_create(unsigned int typeSize)
 {
-    struct ReszArr_array *arr = malloc(sizeof(struct ReszArr_array));
+    struct ReszArr_Array *arr = malloc(sizeof(struct ReszArr_Array));
     arr->capacity = INIT_SZ;
     arr->count = 0;
     arr->typeSize = typeSize;
@@ -19,7 +19,7 @@ struct ReszArr_array *ReszArr_create(unsigned int typeSize)
     return arr;
 }
 
-void ReszArr_append(struct ReszArr_array *arr, void *datum)
+void ReszArr_append(struct ReszArr_Array *arr, void *datum)
 {
     if (arr->count >= arr->capacity) {
         arr->capacity*= RESIZE;
@@ -30,17 +30,17 @@ void ReszArr_append(struct ReszArr_array *arr, void *datum)
     arr->count++;
 }
 
-size_t ReszArr_getCount(struct ReszArr_array *arr)
+size_t ReszArr_getCount(struct ReszArr_Array *arr)
 {
     return arr->count;
 }
 
-void ReszArr_copy(struct ReszArr_array *arr, void *dest)
+void ReszArr_copy(struct ReszArr_Array *arr, void *dest)
 {
     memcpy(dest, arr->data, arr->typeSize);
 }
 
-void ReszArr_destroy(struct ReszArr_array *arr)
+void ReszArr_destroy(struct ReszArr_Array *arr)
 {
     free(arr->data);
     free(arr);
