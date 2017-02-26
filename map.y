@@ -79,7 +79,7 @@ void Map_free(struct Map_map *map)
 %}
 
 %locations
-%pure_parser
+%pure-parser
 
 %union {
     int ival;
@@ -127,20 +127,20 @@ map:
     ;
 
 entities:
-    entities entity { $$ = ReszArr_append($entities, &%entity); }
+    entities entity { $$ = ReszArr_append($1, &%entity); }
     |               { $$ = ReszArr_new(sizeof(struct Map_entity)); }
     ;
 
 entity:
     '{' pairs brushes '}'   {
-                                $$ = makeEntity($pairs, $brushes);
+                                $$ = makeEntity($2, $brushes);
                                 ReszArr_free($pairs);
                                 ReszArr_free($brushes);
                             }
     ;
 
 pairs:
-    pairs pair  { $$ = ReszArr_append($pairs, &$pair); }
+    pairs pair  { $$ = ReszArr_append($1, &$pair); }
     |           { $$ = ReszArr_new(sizeof(struct Map_kvPair)); }
     ;
 
@@ -149,20 +149,20 @@ pair:
     ;
 
 brushes:
-    brushes brush   { $$ = ReszArr_append($brushes, &$brush); }
+    brushes brush   { $$ = ReszArr_append($1, &$brush); }
     |               { $$ = ReszArr_new(sizeof(struct Map_brush)); }
     ;
 
 brush:
     '{' faces face '}'  {
-                            ReszArr_append($faces, $face);
+                            ReszArr_append($2, $face);
                             $$ = makeBrush($faces);
                             ReszArr_free($faces);
                         }
     ;
 
 faces:
-    faces face  { $$ = ReszArr_append($faces, &$face); }
+    faces face  { $$ = ReszArr_append($2, &$face); }
     |           { $$ = ReszArr_new(sizeof(struct Map_face)); }
     ;
 
