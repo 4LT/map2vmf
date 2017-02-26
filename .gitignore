@@ -1,4 +1,6 @@
 map2vmf
 *.o
 *.yy.c
+*.tab.c
+*.tab.h
 *.swp
