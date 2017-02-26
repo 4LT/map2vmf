@@ -2,7 +2,10 @@
 
 all: map2vmf
 
-lex.yy.c: map.l
+map.tab.h: map.y map.h
+	bison -d map.y
+
+lex.yy.c: map.l map.h map.tab.h
 	flex map.l
 
 lex.yy.o: lex.yy.c

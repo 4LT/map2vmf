@@ -1,11 +1,14 @@
-%{
+%code requires {
 #include "map.h"
+struct plane { struct Map_ivec3 plane[3]; };
+}
+
+%code {
 #include "util/reszarr.h"
 
 #define YYYPARSE_PARAM scanner
 #define YYLEX_PARAM    scanner
 
-struct plane { Map_ivec3 plane[3]; };
 
 struct Map_kvPair makePair(char *qkey, char *qvalue)
 {
@@ -76,7 +79,7 @@ void Map_free(struct Map_map *map)
     free(map);
 }
 
-%}
+} /* %code */
 
 %locations
 %pure-parser

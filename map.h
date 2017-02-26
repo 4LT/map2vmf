@@ -26,14 +26,14 @@ struct Map_texData
 struct Map_face
 {
     struct Map_ivec3 plane[3];
-    struct Map_texData;
+    struct Map_texData texData;
 };
 
 struct Map_brush
 {
     struct Map_face *faces;
     unsigned int faceCount;
-}
+};
 
 struct Map_entity
 {
