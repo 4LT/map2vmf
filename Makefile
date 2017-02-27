@@ -1,4 +1,4 @@
-CLFAGS_COMMON=-Wall -pedantic
+CFLAGS_COMMON=-Wall -pedantic
 CFLAGS_DEBUG=$(CFLAGS_COMMON) -ggdb
 CFLAGS_RELEASE=$(CFLAGS_COMMON) -O2
 LDFLAGS=-lfl
@@ -10,11 +10,13 @@ OBJECTS=$(OBJECTS_WD) $(OBJECTS_UTIL)
 
 all: debug
 
-release: map2vmf
-	$(MAKE) CFLAGS=$(CFLAGS_RELEASE)
+release: 
+	$(MAKE) CFLAGS="$(CFLAGS_RELEASE)" build
 
-debug: map2vmf
-	$(MAKE) CFLAGS=$(CFLAGS_DEBUG)
+debug: 
+	$(MAKE) CFLAGS="$(CFLAGS_DEBUG)" build
+
+build: map2vmf
 
 # Working directory
 
