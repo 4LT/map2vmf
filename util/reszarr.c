@@ -1,3 +1,6 @@
+#include <stdlib.h>
+#include <string.h>
+
 #define INIT_SZ 16
 #define RESIZE 2
 
@@ -23,7 +26,7 @@ void ReszArr_append(struct ReszArr_Array *arr, void *datum)
 {
     if (arr->count >= arr->capacity) {
         arr->capacity*= RESIZE;
-        arr->data = realloc(arr->data, typeSize * arr->capacity);
+        arr->data = realloc(arr->data, arr->typeSize * arr->capacity);
     }
     char *data = (char *)(arr->data);
     memcpy(data + arr->count * arr->typeSize, datum, arr->typeSize);
