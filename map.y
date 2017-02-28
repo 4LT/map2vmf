@@ -121,7 +121,6 @@ faces:
 
 face:
     plane texdata   {
-                        struct Map_face face;
                         memcpy(&$$.plane, &$plane, sizeof($plane));
                         $$.texData = $texdata;
                     }
@@ -159,6 +158,8 @@ struct Map_kvPair makePair(char *qkey, char *qvalue)
     char *value = malloc(valSz);
     memcpy(key, qkey+1, keySz);
     memcpy(value, qvalue+1, valSz);
+    free(qkey);
+    free(qvalue);
     key[keySz - 1] = '\0';                   
     value[valSz - 1] = '\0';
     return (struct Map_kvPair) { key, keySz, value, valSz };
@@ -184,6 +185,7 @@ struct Map_texData makeTexData(
 {
     char *nameCpy = malloc(strlen(name) + 1);
     strcpy(nameCpy, name);
+    free(name);
     return (struct Map_texData) {
             { offX, offY }, rot, { scaleX, scaleY }, nameCpy };
 }
