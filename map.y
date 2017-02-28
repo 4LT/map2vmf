@@ -13,22 +13,22 @@
 
     extern int yylex(YYSTYPE *yylval_param, YYLTYPE *yylloc_param);
 
-    void yyerror (char const *s);
+    static void yyerror (char const *s);
 
-    struct Map_kvPair makePair(char *qkey, char *qvalue);
+    static struct Map_kvPair makePair(char *qkey, char *qvalue);
 
-    struct Map_entity makeEntity(
+    static struct Map_entity makeEntity(
             struct ReszArr_Array *kvArr, struct ReszArr_Array *brushArr);
 
-    struct Map_texData makeTexData(
+    static struct Map_texData makeTexData(
             float offX, float offY,
             float rot,
             float scaleX, float scaleY,
             char *name);
 
-    struct Map_brush makeBrush(struct ReszArr_Array *faceArr);
+    static struct Map_brush makeBrush(struct ReszArr_Array *faceArr);
 
-    struct Map_map makeMap(struct ReszArr_Array *entArr);
+    static struct Map_map makeMap(struct ReszArr_Array *entArr);
 }
 
 %locations
