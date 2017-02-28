@@ -32,3 +32,8 @@ DECIMAL     {INT}?"."[[:digit:]]+
 <unquoted>[[:space:]]   BEGIN(INITIAL);
 
 %%
+
+void init_map(FILE *file)
+{
+    yyin = file;
+}

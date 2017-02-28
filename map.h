@@ -49,8 +49,8 @@ struct Map_map
     unsigned int entCount;
 };
 
-struct Map_map *Map_create(const char *fileName);
+struct Map_map const *Map_create(const char *fileName);
 
-void Map_destroy(struct Map_map *map);
+void Map_destroy(struct Map_map const *map);
 
 #endif

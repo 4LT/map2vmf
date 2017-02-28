@@ -1,6 +1,8 @@
 %code requires {
+    #include <stdio.h>
     #include "map.h"
     struct plane { struct Map_ivec3 plane[3]; };
+    void init_map(FILE *file);
 }
 
 %code {
@@ -10,6 +12,8 @@
 
     #define YYYPARSE_PARAM scanner
     #define YYLEX_PARAM    scanner
+
+    static struct Map_map out_map;
 
     extern int yylex(YYSTYPE *yylval_param, YYLTYPE *yylloc_param);
 
@@ -74,7 +78,7 @@
 map:
     entities entity {
                         ReszArr_append($entities, &$entity);
-                        $$ = makeMap($entities);
+                        out_map = makeMap($entities);
                         ReszArr_destroy($entities);
                     }
     ;
@@ -206,7 +210,17 @@ struct Map_map makeMap(struct ReszArr_Array *entArr)
     return (struct Map_map) { entities, entCount };
 }
 
-void Map_free(struct Map_map *map)
+struct Map_map const *Map_create(const char *fileName)
+{
+    FILE *file = fopen(fileName, "r");
+    init_map(file);
+    if (yyparse() == 0)
+        return &out_map;
+    else
+        return NULL;
+}
+
+void Map_destroy(struct Map_map const *map)
 {
     for (unsigned int i = 0; i < map->entCount; i++) {
         struct Map_entity entity = map->entities[i];
