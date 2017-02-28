@@ -45,7 +45,8 @@ clean: clean-util
 # Util
 
 util/reszarr.o: util/reszarr.c util/reszarr.h
-	gcc $(CFLAGS) -c util/reszarr.c
+	cd util &&\
+	gcc $(CFLAGS) -c reszarr.c
 
 clean-util:
 	rm -f util/*.o
