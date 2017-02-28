@@ -1,5 +1,5 @@
 %option stack
-%option bison-bridge bison-locations
+%option bison-bridge
 
 %{
 #include "map.h"
