@@ -27,13 +27,13 @@ lex.yy.c: map.l map.h map.tab.h
 	flex map.l
 
 lex.yy.o: lex.yy.c
-	gcc $(CFLAGS) -c lex.yy.c
+	$(CC) $(CFLAGS) -c lex.yy.c
 
 map.tab.o: map.tab.c
-	gcc $(CFLAGS) -c map.tab.c
+	$(CC) $(CFLAGS) -c map.tab.c
 
 map2vmf: $(OBJECTS)
-	gcc $(LDFLAGS) -o map2vmf $(OBJECTS)
+	$(CC) $(LDFLAGS) -o map2vmf $(OBJECTS)
 
 clean: clean-util
 	rm -f map2vmf
@@ -46,7 +46,7 @@ clean: clean-util
 
 util/reszarr.o: util/reszarr.c util/reszarr.h
 	cd util &&\
-	gcc $(CFLAGS) -c reszarr.c
+	$(CC) $(CFLAGS) -c reszarr.c
 
 clean-util:
 	rm -f util/*.o
