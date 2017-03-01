@@ -19,7 +19,7 @@
 
     static void yyerror (char const *s);
 
-    static struct Map_kvPair makePair(char *qkey, char *qvalue);
+    static struct Map_kvPair makePair(char *key, char *value);
 
     static struct Map_entity makeEntity(
             struct ReszArr_Array *kvArr, struct ReszArr_Array *brushArr);
@@ -53,11 +53,12 @@
     struct ReszArr_Array *arr;
 }
 
-%token <ival> INT
-%token <fval> DECIMAL
-%token <sval> STRING
-%token <sval> UQTEXT
-%token <sval> ERR
+%token <ival> TOK_INT
+%token <fval> TOK_DECIMAL
+%token <sval> TOK_STRING
+%token <sval> TOK_UQTEXT
+%token <sval> TOK_ERR
+%token TOK_EOF
 
 %type <ivec3> ipoint
 %type <kvPair> pair
@@ -76,10 +77,11 @@
 %%
 
 map:
-    entities entity {
+    entities entity TOK_EOF {
                         ReszArr_append($entities, &$entity);
                         out_map = makeMap($entities);
                         ReszArr_destroy($entities);
+                        YYACCEPT;
                     }
     ;
 
@@ -102,7 +104,7 @@ pairs:
     ;
 
 pair:
-    STRING STRING   { $$ = makePair($1, $2); }
+    TOK_STRING TOK_STRING   { $$ = makePair($1, $2); }
     ;
 
 brushes:
@@ -135,18 +137,20 @@ plane:
     ;
 
 ipoint:
-    '(' INT INT INT ')' { $$ = (struct Map_ivec3) {{ $2, $3, $4 }}; }
+    '(' TOK_INT TOK_INT TOK_INT ')'
+        { $$ = (struct Map_ivec3) {{ $2, $3, $4 }}; }
     ;
 
 texdata:
-    UQTEXT number number number number number
+    TOK_UQTEXT number number number number number
         { $$ = makeTexData($2, $3, $4, $5, $6, $1); }
     ;
 
 number:
-    INT         { $$ = (float) $1; }
-    | DECIMAL   { $$ = $1; }
+    TOK_INT         { $$ = (float) $1; }
+    | TOK_DECIMAL   { $$ = $1; }
     ;
+
 %%
 
 void yyerror (char const *s)
@@ -154,19 +158,20 @@ void yyerror (char const *s)
     fprintf (stderr, "%s\n", s);
 }
 
-struct Map_kvPair makePair(char *qkey, char *qvalue)
+struct Map_kvPair makePair(char *key, char *value)
 {
-    unsigned int keySz = strlen(qkey) - 1;
-    unsigned int valSz = strlen(qvalue) - 1;
-    char *key = malloc(keySz);
-    char *value = malloc(valSz);
-    memcpy(key, qkey+1, keySz);
-    memcpy(value, qvalue+1, valSz);
-    free(qkey);
-    free(qvalue);
-    key[keySz - 1] = '\0';                   
-    value[valSz - 1] = '\0';
-    return (struct Map_kvPair) { key, keySz, value, valSz };
+    unsigned int keySz = strlen(key) + 1;
+    unsigned int valSz = strlen(value) + 1;
+    struct Map_kvPair pair;
+    pair.key = malloc(keySz);
+    pair.value = malloc(valSz);
+    pair.keySz = keySz;
+    pair.valueSz = valSz;
+    memcpy(pair.key,   key,   keySz);
+    memcpy(pair.value, value, valSz);
+    free(key);
+    free(value);
+    return pair;
 }
 
 struct Map_entity makeEntity(
@@ -230,7 +235,7 @@ void Map_destroy(struct Map_map const *map)
         }
         free(entity.kvList);
         for (unsigned int j = 0; j < entity.brushCount; j++) {
-            struct Map_brush brush = entity.brushes[i];
+            struct Map_brush brush = entity.brushes[j];
             for (unsigned int k = 0; k < brush.faceCount; k++) {
                 free(brush.faces[k].texData.texName);
             }
@@ -239,5 +244,4 @@ void Map_destroy(struct Map_map const *map)
         free(entity.brushes);
     }
     free(map->entities);
-    free(map);
 }

@@ -40,7 +40,7 @@ size_t ReszArr_getCount(struct ReszArr_Array *arr)
 
 void ReszArr_copy(struct ReszArr_Array *arr, void *dest)
 {
-    memcpy(dest, arr->data, arr->typeSize);
+    memcpy(dest, arr->data, arr->typeSize * arr->count);
 }
 
 void ReszArr_destroy(struct ReszArr_Array *arr)

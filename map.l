@@ -17,17 +17,18 @@ DECIMAL     {INT}?"."[[:digit:]]+
 {COMMENT}       ;
 "("|")"|"{"|"}" return yytext[0];
 "\""            BEGIN(string);
-{INT}           yylval->ival = atol(yytext); return INT;
-{DECIMAL}       yylval->fval = (float)atof(yytext); return DECIMAL;
+{INT}           yylval->ival = atol(yytext); return TOK_INT;
+{DECIMAL}       yylval->fval = (float)atof(yytext); return TOK_DECIMAL;
 [^[:space:]\"]  BEGIN(unquoted); yymore();
-<<EOF>>         /* TODO? */;
+<<EOF>>         return TOK_EOF;
 (.|[[:space:]]) ;
 
-<string>[^"\n]* yylval->sval = strdup(yytext); return STRING;
-<string>"\n"    BEGIN(INITIAL); yylval->sval = "Unclosed string"; return ERR;
+<string>[^"\n]* yylval->sval = strdup(yytext); return TOK_STRING;
+<string>"\n"    { BEGIN(INITIAL); yylval->sval = "Unclosed string";
+                    return TOK_ERR; }
 <string>"\""    BEGIN(INITIAL);
 
-<unquoted>[^[:space:]\"]* yylval->sval = yytext; return UQTEXT;
+<unquoted>[^[:space:]\"]* yylval->sval = strdup(yytext); return TOK_UQTEXT;
 <unquoted>"\""          BEGIN(INITIAL); unput('\"'); 
 <unquoted>[[:space:]]   BEGIN(INITIAL);
 
