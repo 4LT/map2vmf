@@ -1,3 +1,5 @@
+/* map.h - Data structures to describe Quake maps */
+
 #ifndef MAP_H_
 #define MAP_H_
 
@@ -49,8 +51,10 @@ struct Map_map
     unsigned int entCount;
 };
 
+/* Create a map read from the given file name. */
 struct Map_map const *Map_create(const char *fileName);
 
+/* Clean-up a mao struct. */
 void Map_destroy(struct Map_map const *map);
 
 #endif
