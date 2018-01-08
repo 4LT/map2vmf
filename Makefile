@@ -1,7 +1,7 @@
-CFLAGS_COMMON=-Wall -pedantic
+CFLAGS_COMMON=-Wall -pedantic -std=c99
 CFLAGS_DEBUG=$(CFLAGS_COMMON) -ggdb
 CFLAGS_RELEASE=$(CFLAGS_COMMON) -O2
-LDFLAGS=-lfl
+LDFLAGS=
 OBJECTS_WD=lex.yy.o map.tab.o main.o
 OBJECTS_UTIL=util/reszarr.o
 OBJECTS=$(OBJECTS_WD) $(OBJECTS_UTIL)

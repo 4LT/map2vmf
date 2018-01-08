@@ -1,8 +1,10 @@
 %option stack
 %option bison-bridge
+%option noyywrap
 
 %{
 #include "map.h"
+#include "map.y.h"
 #include "map.tab.h"
 %}
 

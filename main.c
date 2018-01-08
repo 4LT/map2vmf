@@ -11,12 +11,12 @@ void indent(int level)
 int main(int argc, char *argv[])
 {
     if (argc != 2) {
-        fputs("Provide a map file argument.", stderr);
+        fputs("Provide a map file argument.\n", stderr);
         return EXIT_FAILURE;
     }
     struct Map_map const *map = Map_create(argv[1]);
     if (map == NULL) {
-        fputs("Failed to parse map.", stderr);
+        fputs("Failed to parse map.\n", stderr);
         return EXIT_FAILURE;
     }
 

@@ -1,39 +1,16 @@
-%code requires {
-    #include <stdio.h>
-    #include "map.h"
-    struct plane { struct Map_ivec3 plane[3]; };
-    void init_map(FILE *file);
-}
-
-%code {
+%{
     #include <stdio.h>
     #include <string.h>
     #include "util/reszarr.h"
+    #include "map.y.h"
+    #include "map.h"
 
+/*
     #define YYYPARSE_PARAM scanner
     #define YYLEX_PARAM    scanner
+*/
 
-    static struct Map_map out_map;
-
-    extern int yylex(YYSTYPE *yylval_param, YYLTYPE *yylloc_param);
-
-    static void yyerror (char const *s);
-
-    static struct Map_kvPair makePair(char *key, char *value);
-
-    static struct Map_entity makeEntity(
-            struct ReszArr_Array *kvArr, struct ReszArr_Array *brushArr);
-
-    static struct Map_texData makeTexData(
-            float offX, float offY,
-            float rot,
-            float scaleX, float scaleY,
-            char *name);
-
-    static struct Map_brush makeBrush(struct ReszArr_Array *faceArr);
-
-    static struct Map_map makeMap(struct ReszArr_Array *entArr);
-}
+%}
 
 %locations
 %pure-parser
@@ -74,32 +51,55 @@
 %type <arr> brushes
 %type <arr> entities
 
+%{
+    static struct Map_map out_map;
+
+    extern int yylex(YYSTYPE *yylval_param, YYLTYPE *yylloc_param);
+
+    static void yyerror (char const *s);
+
+    static struct Map_kvPair makePair(char *key, char *value);
+
+    static struct Map_entity makeEntity(
+            struct ReszArr_Array *kvArr, struct ReszArr_Array *brushArr);
+
+    static struct Map_texData makeTexData(
+            float offX, float offY,
+            float rot,
+            float scaleX, float scaleY,
+            char *name);
+
+    static struct Map_brush makeBrush(struct ReszArr_Array *faceArr);
+
+    static struct Map_map makeMap(struct ReszArr_Array *entArr);
+%}
+
 %%
 
 map:
     entities entity TOK_EOF {
-                        ReszArr_append($entities, &$entity);
-                        out_map = makeMap($entities);
-                        ReszArr_destroy($entities);
+                        ReszArr_append($1, &$2);
+                        out_map = makeMap($1);
+                        ReszArr_destroy($1);
                         YYACCEPT;
                     }
     ;
 
 entities:
-    entities entity { $$ = ReszArr_append($1, &$entity); }
+    entities entity { ReszArr_append($1, &$2); $$ = $1; }
     |               { $$ = ReszArr_create(sizeof(struct Map_entity)); }
     ;
 
 entity:
     '{' pairs brushes '}'   {
-                                $$ = makeEntity($2, $brushes);
-                                ReszArr_destroy($pairs);
-                                ReszArr_destroy($brushes);
+                                $$ = makeEntity($2, $3);
+                                ReszArr_destroy($2);
+                                ReszArr_destroy($3);
                             }
     ;
 
 pairs:
-    pairs pair  { $$ = ReszArr_append($1, &$pair); }
+    pairs pair  { ReszArr_append($1, &$2); $$ = $1; }
     |           { $$ = ReszArr_create(sizeof(struct Map_kvPair)); }
     ;
 
@@ -108,27 +108,27 @@ pair:
     ;
 
 brushes:
-    brushes brush   { $$ = ReszArr_append($1, &$brush); }
+    brushes brush   { ReszArr_append($1, &$2); $$ = $1; }
     |               { $$ = ReszArr_create(sizeof(struct Map_brush)); }
     ;
 
 brush:
     '{' faces face '}'  {
-                            ReszArr_append($2, &$face);
-                            $$ = makeBrush($faces);
-                            ReszArr_destroy($faces);
+                            ReszArr_append($2, &$3);
+                            $$ = makeBrush($2);
+                            ReszArr_destroy($2);
                         }
     ;
 
 faces:
-    faces face  { $$ = ReszArr_append($1, &$face); }
+    faces face  { ReszArr_append($1, &$2); $$ = $1; }
     |           { $$ = ReszArr_create(sizeof(struct Map_face)); }
     ;
 
 face:
     plane texdata   {
-                        memcpy(&$$.plane, &$plane, sizeof($plane));
-                        $$.texData = $texdata;
+                        memcpy(&$$.plane, &$1, sizeof($1));
+                        $$.texData = $2;
                     }
     ;
 
