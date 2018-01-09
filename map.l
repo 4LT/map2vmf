@@ -1,11 +1,20 @@
 %option stack
 %option bison-bridge
 %option noyywrap
+%option never-interactive
 
 %{
 #include "map.h"
 #include "map.y.h"
 #include "map.tab.h"
+
+/* get deep copy of a string, returning malloc'd pointer */
+static char *copyString(char const *inStr)
+{
+    char *outStr = (char *)malloc(strlen(inStr) + 1);
+    strcpy(outStr, inStr);
+    return outStr;
+}
 %}
 
 COMMENT     "//".*
@@ -25,12 +34,12 @@ DECIMAL     {INT}?"."[[:digit:]]+
 <<EOF>>         return TOK_EOF;
 (.|[[:space:]]) ;
 
-<string>[^"\n]* yylval->sval = strdup(yytext); return TOK_STRING;
+<string>[^"\n]* yylval->sval = copyString(yytext); return TOK_STRING;
 <string>"\n"    { BEGIN(INITIAL); yylval->sval = "Unclosed string";
                     return TOK_ERR; }
 <string>"\""    BEGIN(INITIAL);
 
-<unquoted>[^[:space:]\"]* yylval->sval = strdup(yytext); return TOK_UQTEXT;
+<unquoted>[^[:space:]\"]* yylval->sval = copyString(yytext); return TOK_UQTEXT;
 <unquoted>"\""          BEGIN(INITIAL); unput('\"'); 
 <unquoted>[[:space:]]   BEGIN(INITIAL);
 
