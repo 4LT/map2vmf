@@ -1,22 +1,23 @@
 #include "config.h"
 
-#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
 #include "util/reszarr.h"
 
-enum Conf_state {
+enum Conf_State {
     CONF_STATE_READING_KEY,
     CONF_STATE_WAITING_KEY,
     CONF_STATE_READING_VALUE,
     CONF_STATE_WAITING_VALUE
 };
 
-int Conf_readConfig(char const *fileName, struct Conf_config *outConfig) {
+int Conf_readConfig(char const *fileName, struct Conf_Config *outConfig) {
     FILE *file = fopen(fileName, "r");
     
     if (file == (FILE *)0)
         return 0;
 
-    enum Conf_state state = CONF_STATE_WAITING_KEY;
+    enum Conf_State state = CONF_STATE_WAITING_KEY;
     int ch;
     struct ReszArr_Array *keyBuf = (void *)0;
     struct ReszArr_Array *valBuf = (void *)0;
@@ -34,8 +35,8 @@ int Conf_readConfig(char const *fileName, struct Conf_config *outConfig) {
                         state = CONF_STATE_WAITING_VALUE;
                         break;
                     case CONF_STATE_READING_VALUE:
-                        key = calloc(ReszArr_count(keyBuf)+1, 1);
-                        value = calloc(ReszArr_count(valBuf)+1, 1);
+                        key = calloc(ReszArr_getCount(keyBuf)+1, 1);
+                        value = calloc(ReszArr_getCount(valBuf)+1, 1);
                         ReszArr_copy(keyBuf, key);
                         ReszArr_copy(valBuf, value);
                         ReszArr_destroy(keyBuf);
@@ -44,7 +45,6 @@ int Conf_readConfig(char const *fileName, struct Conf_config *outConfig) {
                         valBuf = (void *)0;
                         state = CONF_STATE_WAITING_KEY;
                         break;
-                    default:
                 }
             }
             else {
@@ -99,11 +99,11 @@ int Conf_readConfig(char const *fileName, struct Conf_config *outConfig) {
     return 1;
 }
 
-int Conf_writeVersionInfo(struct Conf_versioninfo versioninfo, FILE *out) {
+int Conf_writeVersionInfo(struct Conf_VersionInfo versioninfo, FILE *out) {
     fprintf(out, "versioninfo\n{\n");
     fprintf(out, "\t\"editorversion\" \"%d\"\n", versioninfo.editorversion);
     fprintf(out, "\t\"editorbuild\" \"%d\"\n", versioninfo.editorbuild);
-    fprintf(out, "\t\"mapversion\" \"%d\"\n", versioninfo.mapbuild);
+    fprintf(out, "\t\"mapversion\" \"%d\"\n", versioninfo.mapversion);
     fprintf(out, "\t\"formatversion\" \"%d\"\n", versioninfo.formatversion);
     fprintf(out, "\t\"prefab\" \"%d\"\n", versioninfo.prefab);
     fprintf(out, "}\n");

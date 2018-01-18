@@ -2,8 +2,9 @@
 #define CONFIG_H_
 
 #include <stdlib.h>
+#include <stdio.h>
 
-struct Conf_versioninfo {
+struct Conf_VersionInfo {
     int editorversion;
     int editorbuild;
     int mapversion;
@@ -11,18 +12,17 @@ struct Conf_versioninfo {
     int prefab;
 };
 
-struct Conf_lightmap {
+struct Conf_Lightmap {
     int scale;
 };
 
-struct Conf_config {
-    struct Conf_versioninfo versioninfo;
-    struct Conf_lightmap lightmap;
+struct Conf_Config {
+    struct Conf_VersionInfo versioninfo;
+    struct Conf_Lightmap lightmap;
 };
 
-struct Conf_config Conf_readConfig(char const *fileName);
+int Conf_readConfig(char const *fileName, struct Conf_Config *outConfig);
 
-void Conf_writeVersionInfo(struct Conf_versioninfo versioninfo,
-        char *outString, size_t outSize);
+int Conf_writeVersionInfo(struct Conf_VersionInfo versioninfo, FILE *outFile);
 
 #endif
